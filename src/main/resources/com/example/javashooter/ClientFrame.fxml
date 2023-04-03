@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.layout.AnchorPane?>
+
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.shape.Rectangle?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.shape.Circle?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.Group?>
+<BorderPane
+        xmlns="http://javafx.com/javafx"
+        xmlns:fx="http://javafx.com/fxml"
+        fx:controller="com.example.javashooter.ClientFrame"
+        styleClass="grid">
+
+    <left>
+        <VBox prefWidth="100"
+              styleClass="player-zone" alignment="CENTER"
+
+              fx:id="playersBox">
+<!--            <Button-->
+<!--                    prefHeight="140" prefWidth="140"-->
+<!--                    styleClass="player-connect" >-->
+<!--            </Button>-->
+<!--            <Button-->
+<!--                    prefHeight="140" prefWidth="140"-->
+<!--                    styleClass="player-client" >-->
+<!--            </Button>-->
+<!--            <Button-->
+<!--                    prefHeight="140" prefWidth="140"-->
+<!--                    styleClass="player-connect" >-->
+<!--            </Button>-->
+
+
+
+        </VBox>
+
+    </left>
+    <center>
+        <Pane xmlns="http://javafx.com/javafx/11.0.2"
+              styleClass="with-borders"
+              fx:id="gamePane"  >
+            <Line startX="500.0" endX="500.0" endY="560.0"
+                  opacity="0.7"
+                  stroke="black" strokeLineCap="BUTT" strokeWidth="4.0"/>
+            <Line startX="650.0" endX="650.0" endY="560.0"
+                  opacity="0.7"
+                  stroke="black" strokeLineCap="BUTT" strokeWidth="4.0"/>
+
+        </Pane>
+    </center>
+    <right>
+        <VBox  prefWidth="250" alignment="TOP_CENTER"
+               fx:id="infoBox"
+            >
+<!--            <VBox>-->
+
+<!--            <Label-->
+<!--                    styleClass="text-label"-->
+<!--                    text="asd" />-->
+<!--            <Text-->
+<!--                    styleClass="text"-->
+<!--                    text="asd"/>-->
+<!--            <Label-->
+<!--                    styleClass="text-label"-->
+<!--                    text="asd" />-->
+<!--            <Text-->
+<!--                    styleClass="text"-->
+<!--                    text="0"/>-->
+<!--            <Label-->
+<!--                    styleClass="text-label"-->
+<!--                    text="Количество выстрелов!"/>-->
+<!--            <Text-->
+<!--                    styleClass="text"-->
+<!--                    text="0"/>-->
+
+<!--            </VBox>-->
+        </VBox>
+    </right>
+    <bottom>
+        <HBox  prefHeight="100"  alignment="CENTER_LEFT"
+               spacing="20" styleClass="with-padding">
+            <Button
+                    styleClass="btn"
+                    text="Готов"
+                    onMouseClicked="#onReady"
+            />
+            <Button
+                    styleClass="btn"
+                    text="Остановить игру"
+                    onMouseClicked="#onPause"
+            />
+            <Button
+                    styleClass="btn"
+                    text="Выстрел"
+                    onMouseClicked="#onShoot"
+
+            />
+        </HBox>
+    </bottom>
+
+
+</BorderPane>
+

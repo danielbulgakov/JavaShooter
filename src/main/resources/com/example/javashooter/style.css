@@ -1,0 +1,49 @@
+.player-zone {
+    -fx-background-color: #FDFF00;
+}
+.player-client {
+    -fx-background-insets: 10 ;
+    -fx-background-color: red;
+    -fx-shape: 'M 0 0 25 200 0 400 z';
+}
+.player-connect {
+    -fx-background-insets: 10 ;
+    -fx-background-color: blue;
+    -fx-shape: 'M 0 0 25 200 0 400 z';
+}
+.text-label {
+    -fx-font-size: 16;
+    -fx-font-weight: bold;
+}
+.text {
+    -fx-font-size: 15;
+
+}
+.grid {
+    -fx-grid-lines-visible: false;
+}
+.btn {
+    -fx-font-size: 20;
+
+}
+.with-borders {
+    -fx-border-color:black;
+    -fx-border-width: 2;
+    -fx-border-insets: -1;
+}
+.with-padding {
+    -fx-padding: 20;
+}
+.with-gaps {
+    -fx-hgap: 10;
+    -fx-vgap: 10;
+}
+.targets {
+    -fx-fill : radial-gradient(focus-distance 0% , center 50% 50% , radius 65% , red, white);
+    -fx-stroke: black;
+    -fx-stroke-width: 3;
+
+}
+
+
+
