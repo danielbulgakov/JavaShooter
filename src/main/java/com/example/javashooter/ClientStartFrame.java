@@ -3,7 +3,7 @@ package com.example.javashooter;
 import com.example.javashooter.connection.Model;
 import com.example.javashooter.connection.ModelBuilder;
 import com.example.javashooter.connection.responses.ServerResp;
-import com.example.javashooter.connection.responses.SocketStringMsg;
+import com.example.javashooter.connection.responses.SocketMesWrapper;
 import com.google.gson.Gson;
 import javafx.event.Event;
 import javafx.fxml.FXML;
@@ -25,12 +25,7 @@ public class ClientStartFrame {
     int port = 3124;
     InetAddress ip = null;
 
-    InputStream is;
-    OutputStream os;
-    DataInputStream dis;
-    DataOutputStream dos;
-
-    SocketStringMsg skm;
+    SocketMesWrapper socketMesWrapper;
     @FXML
     TextField nameField;
 
@@ -39,24 +34,23 @@ public class ClientStartFrame {
         try {
             ip = InetAddress.getLocalHost();
             socket = new Socket(ip, port);
-            skm = new SocketStringMsg(socket);
-            skm.sendMessage(nameField.getText().trim());
-            String response = skm.getMessage();
+            socketMesWrapper = new SocketMesWrapper(socket);
+            socketMesWrapper.sendMessage(nameField.getText().trim());
+            String response = socketMesWrapper.getMessage();
             if (response.equals("ACCEPT")) {
                 new Thread(
                         ()->
                         {
                             try {
-                                is = socket.getInputStream();
-                                dis = new DataInputStream(is);
                                 while (true) {
-                                    String s = dis.readUTF();
+                                    String s = socketMesWrapper.getData();
                                     System.out.println("Res: " + s);
                                     Gson gson = new Gson();
                                     ServerResp ra = gson.fromJson(s, ServerResp.class);
                                     m.setTargetArrayList(ra.circleArrayList);
                                     m.setClientArrayList(ra.clientArrayList);
                                     m.setArrowArrayList(ra.targetArrayList);
+                                    m.setWinner(ra.theWinnerIs);
                                     m.update();
                                 }
 
@@ -100,7 +94,7 @@ public class ClientStartFrame {
             ((Node)(event.getSource())).getScene().getWindow().hide();
 
             ClientFrame clientFrame = fxmlLoader.getController();
-            clientFrame.dataInit(socket, nameField.getText());
+            clientFrame.dataInit(socketMesWrapper, nameField.getText().trim());
             m.update();
         }
         catch (IOException e) {

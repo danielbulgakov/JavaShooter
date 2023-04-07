@@ -1,6 +1,6 @@
 package com.example.javashooter.myobjects;
 
-import com.example.javashooter.connection.ClientDataManager;
+import com.example.javashooter.connection.ClientInfo;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
@@ -8,7 +8,7 @@ import javafx.scene.text.Text;
 
 public class PlayerInfo {
 
-    public static VBox createVbox(ClientDataManager cd) {
+    public static VBox createVbox(ClientInfo cd) {
         VBox vb = new VBox();
         vb.setAlignment(Pos.TOP_CENTER);
         vb.prefWidth(250);
@@ -24,7 +24,7 @@ public class PlayerInfo {
         t = new Text(Integer.toString(cd.getArrowsShoot())); t.getStyleClass().add("text");
         vb.getChildren().add(t);
 
-        l = new Label("Кол-во  попаданий"); l.getStyleClass().add("text-label");
+        l = new Label("Кол-во  очков"); l.getStyleClass().add("text-label");
         vb.getChildren().add(l);
         t = new Text(Integer.toString(cd.getPointsEarned())); t.getStyleClass().add("text");
         vb.getChildren().add(t);

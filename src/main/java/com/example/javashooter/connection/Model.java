@@ -7,15 +7,17 @@ import java.util.ArrayList;
 public class Model {
 
     private final ArrayList<IObserver> observerArrayList = new ArrayList<>();
-    private ArrayList<ClientDataManager> clientArrayList = new ArrayList<>();
+    private ArrayList<ClientInfo> clientArrayList = new ArrayList<>();
     private ArrayList<MyPoint> targetArrayList = new ArrayList<>();
     private ArrayList<MyPoint> arrowArrayList = new ArrayList<>();
 
     // Game Modeling Constants
-    private int ready = 0;
+    private final ArrayList<String> readyList = new ArrayList<>();
     private static final int Y_BOUND = 560;
     private final ArrayList<String> waitingList = new ArrayList<>();
     private final ArrayList<String> shootingList = new ArrayList<>();
+    private String winner = null;
+    private volatile boolean isGameReset = true;
 
     public void update()
     {
@@ -43,17 +45,21 @@ public class Model {
     }
 
     // Ready state handle
-    public void ready(MainServer mc) {
-        ready++;
-        if (ready == clientArrayList.size())
+    public void ready(MainServer mc, String name) {
+        if (readyList.isEmpty()) { readyList.add(name); return;}
+
+        if (readyList.contains(name)) {readyList.remove(name); }
+        else {readyList.add(name);}
+
+        if (clientArrayList.size() > 1 && readyList.size() == clientArrayList.size()) {
+            isGameReset = false;
             gameStart(mc);
-    }
-    public void notReady() {
-        ready--;
+        }
     }
 
     // Pause state handle
     public void requestPause(String name) {
+        if (isGameReset) return;
         if (waitingList.contains(name)) {
             waitingList.remove(name);
             if (waitingList.size() == 0){
@@ -69,6 +75,7 @@ public class Model {
 
     // Shoot state handle
     public void requestShoot(String playerName) {
+        if (isGameReset) return;
         var player = clientArrayList.stream()
                 .filter(clientData -> clientData.getPlayerName().equals(playerName))
                 .findFirst()
@@ -88,6 +95,10 @@ public class Model {
                     int sml_move = 10;
                     int arr_move = 5;
                     while (true) {
+                        if (isGameReset) {
+                            winner = null;
+                            break;
+                        }
                         if (waitingList.size() != 0) {
                             synchronized(this) {
                                 try {
@@ -102,7 +113,7 @@ public class Model {
                                 for (int i = 0; i < shootingList.size(); i++) {
                                     int finalI = i;
                                     if (shootingList.get(finalI) == null) break;
-                                    ClientDataManager client = clientArrayList.stream()
+                                    ClientInfo client = clientArrayList.stream()
                                             .filter(clientData -> clientData.getPlayerName().equals(shootingList.get(finalI)))
                                             .findFirst()
                                             .orElse(null);
@@ -138,7 +149,19 @@ public class Model {
 
     }
 
-    private synchronized void shootManager(MyPoint p, ClientDataManager player) {
+    private void gameReset() {
+        isGameReset = true;
+        readyList.clear();
+        targetArrayList.clear();
+        arrowArrayList.clear();
+        waitingList.clear();
+        shootingList.clear();
+        clientArrayList.forEach(ClientInfo::reset);
+        this.init();
+    }
+
+
+    private synchronized void shootManager(MyPoint p, ClientInfo player) {
         ShootState shootState = targetHitCheck(p);
         System.out.println(shootState);
         if (shootState.equals(ShootState.FLYING)) return;
@@ -149,8 +172,19 @@ public class Model {
         else {
             shootingList.remove(player.getPlayerName());
         }
+        checkWinner();
 
 
+    }
+
+    private synchronized void checkWinner() {
+        clientArrayList.forEach(clientDataManager -> {
+            if (clientDataManager.getPointsEarned() >= 10) {
+                this.winner = clientDataManager.getPlayerName();
+                gameReset();
+                return;
+            }
+        });
     }
 
     private synchronized ShootState targetHitCheck(MyPoint p) {
@@ -161,7 +195,7 @@ public class Model {
         if (contains(targetArrayList.get(0), p.getX() + p.getR(), p.getY())) {
             return ShootState.BIG_SHOT;
         }
-        if (p.getX() > 700) {
+        if (p.getX() > 650) {
             return ShootState.MISSED;
         }
         return ShootState.FLYING;
@@ -184,20 +218,28 @@ public class Model {
 
 
 
-    public void addClient(ClientDataManager clientData) {
+    public void addClient(ClientInfo clientData) {
         clientArrayList.add(clientData);
         this.arrowsCountUpdate();
     }
+    public String getWinner() {
+        return winner;
+    }
+
+    public void setWinner(String winner) {
+        this.winner = winner;
+    }
+
     public  void addObserver(IObserver o)
     {
         observerArrayList.add(o);
     }
 
-    public ArrayList<ClientDataManager> getClientArrayList() {
+    public ArrayList<ClientInfo> getClientArrayList() {
         return clientArrayList;
     }
 
-    public void setClientArrayList(ArrayList<ClientDataManager> clientArrayList) {
+    public void setClientArrayList(ArrayList<ClientInfo> clientArrayList) {
         this.clientArrayList = clientArrayList;
     }
 

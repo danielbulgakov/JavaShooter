@@ -1,6 +1,6 @@
 package com.example.javashooter.connection;
 
-import com.example.javashooter.connection.responses.SocketStringMsg;
+import com.example.javashooter.connection.responses.SocketMesWrapper;
 
 import java.io.*;
 import java.net.InetAddress;
@@ -15,7 +15,6 @@ public class MainServer {
     InetAddress ip = null;
     ExecutorService service = Executors.newFixedThreadPool(4);
     ArrayList<Client> clientArrayList = new ArrayList<>();
-    SocketStringMsg socketStringMsg;
 
     Model model = ModelBuilder.build();
 
@@ -34,10 +33,10 @@ public class MainServer {
             {
                 Socket cs;
                 cs = ss.accept();
-                socketStringMsg = new SocketStringMsg(cs);
-                String respName = socketStringMsg.getMessage();
+                SocketMesWrapper socketMesWrapper = new SocketMesWrapper(cs);
+                String respName = socketMesWrapper.getMessage();
 
-                if (tryAddClient(cs, respName)) {
+                if (tryAddClient(socketMesWrapper, respName)) {
                     System.out.println(respName + " Connected");
                 } else {
                     cs.close();
@@ -47,9 +46,9 @@ public class MainServer {
         } catch (IOException ignored) {}
     }
 
-    private boolean tryAddClient(Socket sock, String name) {
+    private boolean tryAddClient(SocketMesWrapper socketMesWrapper, String name) {
          if (clientArrayList.size() >= 4) {
-             socketStringMsg.sendMessage("Превышено максимальное число подключений");
+             socketMesWrapper.sendMessage("Превышено максимальное число подключений");
              return false;
          }
          if (clientArrayList.isEmpty() ||
@@ -57,14 +56,14 @@ public class MainServer {
                 .filter(client -> client.getPlayerName().equals(name))
                 .findFirst()
                 .orElse(null) == null) {
-             socketStringMsg.sendMessage("ACCEPT");
-             Client c = new Client(sock, this, name);
+             socketMesWrapper.sendMessage("ACCEPT");
+             Client c = new Client(socketMesWrapper, this, name);
              clientArrayList.add(c);
              service.submit(c);
              System.out.println("RESPONSE ACCEPT");
              return true;
          }
-        socketStringMsg.sendMessage("Уже имеется игрок с таким именем");
+        socketMesWrapper.sendMessage("Уже имеется игрок с таким именем");
         System.out.println("RESPONSE DECLINE");
         return false;
     }

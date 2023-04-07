@@ -1,11 +1,11 @@
 package com.example.javashooter.connection;
 
-public class ClientDataManager {
+public class ClientInfo {
     private String playerName;
     private int  arrowsShoot = 0;
     private int pointsEarned = 0;
 
-    public ClientDataManager(String playerName) {
+    public ClientInfo(String playerName) {
         this.playerName = playerName;
     }
 
@@ -16,6 +16,11 @@ public class ClientDataManager {
     public void reset() {
         arrowsShoot = 0;
         pointsEarned = 0;
+    }
+
+    public void resetInfo() {
+        this.arrowsShoot = 0;
+        this.pointsEarned = 0;
     }
 
     public void increasePointsEarned(int a) {

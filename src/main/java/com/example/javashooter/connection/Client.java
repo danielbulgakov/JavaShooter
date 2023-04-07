@@ -3,31 +3,24 @@ package com.example.javashooter.connection;
 import com.example.javashooter.connection.responses.ClientActions;
 import com.example.javashooter.connection.responses.ClientReq;
 import com.example.javashooter.connection.responses.ServerResp;
+import com.example.javashooter.connection.responses.SocketMesWrapper;
 import com.google.gson.Gson;
 
 import java.io.*;
 import java.net.Socket;
 
 public class Client implements Runnable{
-    Socket socket;
+
     MainServer mainServer;
-    InputStream inputStream;
-    OutputStream outputStream;
-    DataInputStream dataInputStream;
-    DataOutputStream dataOutputStream;
+    SocketMesWrapper socketMesWrapper;
     Gson gson = new Gson();
     Model model = ModelBuilder.build();
-    ClientDataManager clientData;
-    boolean isReady = false;
+    ClientInfo clientData;
 
-    public Client(Socket socket, MainServer mainServer, String playerName)  {
-        this.socket = socket;
+    public Client(SocketMesWrapper socketMesWrapper, MainServer mainServer, String playerName)  {
+        this.socketMesWrapper = socketMesWrapper;
         this.mainServer = mainServer;
-        clientData = new ClientDataManager(playerName);
-        try {
-            outputStream = socket.getOutputStream();
-            dataOutputStream = new DataOutputStream(outputStream);
-        } catch (IOException ignored) { }
+        clientData = new ClientInfo(playerName);
     }
     public String getPlayerName() {
         return clientData.getPlayerName();
@@ -39,9 +32,9 @@ public class Client implements Runnable{
             serverResp.clientArrayList = model.getClientArrayList();
             serverResp.targetArrayList = model.getArrowsArrayList();
             serverResp.circleArrayList = model.getTargetArrayList();
+            serverResp.theWinnerIs = model.getWinner();
 
-            String s = gson.toJson(serverResp);
-            dataOutputStream.writeUTF(s);
+            socketMesWrapper.writeData(gson.toJson(serverResp));
         } catch (IOException ex) {
         }
     }
@@ -51,8 +44,6 @@ public class Client implements Runnable{
     @Override
     public void run() {
         try {
-            inputStream = socket.getInputStream();
-            dataInputStream = new DataInputStream(inputStream);
 
             System.out.println("Cilent thread " + clientData.getPlayerName() + " started");
 
@@ -62,7 +53,7 @@ public class Client implements Runnable{
 
             while(true)
             {
-                String s = dataInputStream.readUTF();
+                String s = socketMesWrapper.getData();
                 System.out.println("Msg: " + s);
 
 
@@ -70,9 +61,8 @@ public class Client implements Runnable{
 
                 if(msg.getClientActions() == ClientActions.READY)
                 {
-                    isReady = !isReady;
-                    if (isReady) model.ready(mainServer);
-                    else model.notReady();
+                    System.out.println("READY " + getPlayerName());
+                    model.ready(mainServer, this.getPlayerName());
                 }
 
                 if(msg.getClientActions() == ClientActions.STOP)
@@ -89,7 +79,7 @@ public class Client implements Runnable{
 
         }
     }
-    public ClientDataManager getClientData() {
+    public ClientInfo getClientData() {
         return clientData;
     }
 
