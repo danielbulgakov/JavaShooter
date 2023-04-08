@@ -6,7 +6,7 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 
-public class PlayerInfo {
+public class PlayerInfoBox {
 
     public static VBox createVbox(ClientInfo cd) {
         VBox vb = new VBox();

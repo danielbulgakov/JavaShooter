@@ -31,6 +31,10 @@ public class ClientInfo {
         return playerName;
     }
 
+    public String getPlayerMarkedName() {
+        return playerName + " (Вы)";
+    }
+
     public int getArrowsShoot() {
         return arrowsShoot;
     }

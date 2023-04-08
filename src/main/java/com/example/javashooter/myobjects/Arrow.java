@@ -1,7 +1,6 @@
 package com.example.javashooter.myobjects;
 
 import javafx.scene.shape.*;
-import javafx.util.Pair;
 
 public class Arrow extends Path {
     private static final double defaultArrowLength = 30.0;

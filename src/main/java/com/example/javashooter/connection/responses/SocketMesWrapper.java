@@ -4,7 +4,7 @@ import java.io.*;
 import java.net.Socket;
 
 public class SocketMesWrapper {
-    Socket socket;
+    final Socket socket;
     BufferedReader in;
     PrintWriter out;
     DataInputStream dataInputStream;

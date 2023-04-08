@@ -7,15 +7,14 @@ import com.example.javashooter.connection.responses.SocketMesWrapper;
 import com.google.gson.Gson;
 
 import java.io.*;
-import java.net.Socket;
 
 public class Client implements Runnable{
 
-    MainServer mainServer;
-    SocketMesWrapper socketMesWrapper;
-    Gson gson = new Gson();
-    Model model = ModelBuilder.build();
-    ClientInfo clientData;
+    final MainServer mainServer;
+    final SocketMesWrapper socketMesWrapper;
+    final Gson gson = new Gson();
+    final Model model = ModelBuilder.build();
+    final ClientInfo clientData;
 
     public Client(SocketMesWrapper socketMesWrapper, MainServer mainServer, String playerName)  {
         this.socketMesWrapper = socketMesWrapper;
@@ -35,7 +34,7 @@ public class Client implements Runnable{
             serverResp.theWinnerIs = model.getWinner();
 
             socketMesWrapper.writeData(gson.toJson(serverResp));
-        } catch (IOException ex) {
+        } catch (IOException ignored) {
         }
     }
 
@@ -45,7 +44,7 @@ public class Client implements Runnable{
     public void run() {
         try {
 
-            System.out.println("Cilent thread " + clientData.getPlayerName() + " started");
+            System.out.println("Client thread " + clientData.getPlayerName() + " started");
 
             // Broadcast new player added
             model.addClient(clientData);

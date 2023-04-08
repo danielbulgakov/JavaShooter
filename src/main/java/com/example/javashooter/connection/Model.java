@@ -10,13 +10,12 @@ public class Model {
     private ArrayList<ClientInfo> clientArrayList = new ArrayList<>();
     private ArrayList<MyPoint> targetArrayList = new ArrayList<>();
     private ArrayList<MyPoint> arrowArrayList = new ArrayList<>();
-
-    // Game Modeling Constants
     private final ArrayList<String> readyList = new ArrayList<>();
     private static final int Y_BOUND = 560;
     private final ArrayList<String> waitingList = new ArrayList<>();
     private final ArrayList<String> shootingList = new ArrayList<>();
     private String winner = null;
+    private static final int WINNER_POINTS = 2;
     private volatile boolean isGameReset = true;
 
     public void update()
@@ -75,7 +74,7 @@ public class Model {
 
     // Shoot state handle
     public void requestShoot(String playerName) {
-        if (isGameReset) return;
+        if (isGameReset || waitingList.size() != 0) return;
         var player = clientArrayList.stream()
                 .filter(clientData -> clientData.getPlayerName().equals(playerName))
                 .findFirst()
@@ -93,7 +92,7 @@ public class Model {
                 {
                     int big_move = 5;
                     int sml_move = 10;
-                    int arr_move = 5;
+                    int arr_move = 15;
                     while (true) {
                         if (isGameReset) {
                             winner = null;
@@ -121,7 +120,7 @@ public class Model {
                                     MyPoint p = arrowArrayList.get(index);
                                     p.setX(p.getX() + arr_move);
                                     shootManager(p, client);
-                                };
+                                }
 
                         }
                         MyPoint big = targetArrayList.get(0);
@@ -179,7 +178,7 @@ public class Model {
 
     private synchronized void checkWinner() {
         clientArrayList.forEach(clientDataManager -> {
-            if (clientDataManager.getPointsEarned() >= 10) {
+            if (clientDataManager.getPointsEarned() >= WINNER_POINTS) {
                 this.winner = clientDataManager.getPlayerName();
                 gameReset();
                 return;

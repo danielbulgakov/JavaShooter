@@ -11,12 +11,12 @@ import java.util.concurrent.Executors;
 import java.net.ServerSocket;
 
 public class MainServer {
-    int port = 3124;
+    final int port = 3124;
     InetAddress ip = null;
-    ExecutorService service = Executors.newFixedThreadPool(4);
-    ArrayList<Client> clientArrayList = new ArrayList<>();
+    final ExecutorService service = Executors.newFixedThreadPool(4);
+    final ArrayList<Client> clientArrayList = new ArrayList<>();
 
-    Model model = ModelBuilder.build();
+    final Model model = ModelBuilder.build();
 
     public void bcast(){
         clientArrayList.forEach(Client::sendInfoToClient);

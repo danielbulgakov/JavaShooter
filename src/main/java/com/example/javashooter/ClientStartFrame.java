@@ -22,14 +22,14 @@ import java.net.Socket;
 
 public class ClientStartFrame {
     Socket socket;
-    int port = 3124;
+    final int port = 3124;
     InetAddress ip = null;
 
     SocketMesWrapper socketMesWrapper;
     @FXML
     TextField nameField;
 
-    Model m = ModelBuilder.build();
+    final Model m = ModelBuilder.build();
     public void onConnect(MouseEvent mouseEvent) {
         try {
             ip = InetAddress.getLocalHost();
@@ -54,7 +54,7 @@ public class ClientStartFrame {
                                     m.update();
                                 }
 
-                            } catch (IOException ex) {
+                            } catch (IOException ignored) {
 
                             }
 
@@ -62,7 +62,11 @@ public class ClientStartFrame {
                 ).start();
                 openGamePage(mouseEvent);
             } else {
+                double x = ((Node)(mouseEvent.getSource())).getScene().getWindow().getX();
+                double y = ((Node)(mouseEvent.getSource())).getScene().getWindow().getY();
                 Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setX(x);
+                alert.setY(y);
                 alert.setTitle("Ошибка");
                 alert.setHeaderText("Ошибка");
                 alert.setContentText(response);
@@ -87,10 +91,11 @@ public class ClientStartFrame {
             Scene scene = new Scene(root1, 1100, 660);
             scene.getStylesheets().add(getClass().getResource("style.css").toExternalForm());
             Stage stage = new Stage();
-            stage.setResizable(true);
+            stage.setResizable(false);
             stage.setTitle("Java Shooter Game.");
             stage.setScene(scene);
             stage.show();
+
             ((Node)(event.getSource())).getScene().getWindow().hide();
 
             ClientFrame clientFrame = fxmlLoader.getController();

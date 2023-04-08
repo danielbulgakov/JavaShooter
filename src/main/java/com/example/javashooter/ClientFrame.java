@@ -9,7 +9,7 @@ import com.example.javashooter.connection.IObserver;
 import com.example.javashooter.connection.responses.SocketMesWrapper;
 import com.example.javashooter.myobjects.Arrow;
 import com.example.javashooter.myobjects.MyPoint;
-import com.example.javashooter.myobjects.PlayerInfo;
+import com.example.javashooter.myobjects.PlayerInfoBox;
 import com.google.gson.Gson;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -21,7 +21,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
 
 import java.io.*;
-import java.net.Socket;
 import java.util.ArrayList;
 
 public class ClientFrame implements IObserver {
@@ -31,16 +30,16 @@ public class ClientFrame implements IObserver {
     private Pane gamePane;
     @FXML
     private VBox playersBox;
-    ArrayList<Button> players = new ArrayList<>();
-    ArrayList<VBox> playersInfo = new ArrayList<>();
-    ArrayList<Arrow> arrows = new ArrayList<>();
-    ArrayList<Circle> targets = new ArrayList<>();
+    final ArrayList<Button> players = new ArrayList<>();
+    final ArrayList<VBox> playersInfo = new ArrayList<>();
+    final ArrayList<Arrow> arrows = new ArrayList<>();
+    final ArrayList<Circle> targets = new ArrayList<>();
 
     private String playerName;
-    private Gson gson = new Gson();
+    private final Gson gson = new Gson();
     private SocketMesWrapper socketMesWrapper;
 
-    private Model m = ModelBuilder.build();
+    private final Model m = ModelBuilder.build();
 
     public void initialize() {
         m.addObserver(this);
@@ -81,7 +80,11 @@ public class ClientFrame implements IObserver {
     private void checkWinner() {
         if (m.getWinner() != null) {
             Platform.runLater(() -> {
+                double x = gamePane.getScene().getWindow().getX();
+                double y = gamePane.getScene().getWindow().getY();
                 Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setX(x);
+                alert.setY(y);
                 alert.setTitle("У нас есть победитель!");
                 alert.setHeaderText("У нас есть победитель!");
                 alert.setContentText("Победитель : " + ((m.getWinner()).equals(this.playerName) ? "Вы" : m.getWinner()) + "!");
@@ -119,15 +122,11 @@ public class ClientFrame implements IObserver {
         });
     }
     private void updateArrows(ArrayList<MyPoint> a) {
-        System.out.println("{");
-        a.forEach(System.out::println);
-        System.out.println("}");
         if (a == null || a.size() == 0) return;
         Platform.runLater(() -> {
             arrows.forEach(arrow -> gamePane.getChildren().remove(arrow));
-            for (int i = 0; i < a.size(); i++) {
-
-                Arrow arr = new Arrow(a.get(i).getX(),a.get(i).getY(), a.get(i).getR());
+            for (MyPoint myPoint : a) {
+                Arrow arr = new Arrow(myPoint.getX(), myPoint.getY(), myPoint.getR());
                 arrows.add(arr);
                 gamePane.getChildren().add(arr);
 
@@ -141,13 +140,13 @@ public class ClientFrame implements IObserver {
         Platform.runLater(() -> {
             for (int i = 0; i < a.size(); i++) {
                 if (i >= players.size()) {
-                    VBox vb = PlayerInfo.createVbox(a.get(i));
+                    VBox vb = PlayerInfoBox.createVbox(a.get(i));
                     playersInfo.add(vb);
                     infoBox.getChildren().add(vb);
                 } else {
-                    PlayerInfo.setPlayerName(playersInfo.get(i), a.get(i).getPlayerName());
-                    PlayerInfo.setPlayerShots(playersInfo.get(i), a.get(i).getArrowsShoot());
-                    PlayerInfo.setPlayerPoints(playersInfo.get(i), a.get(i).getPointsEarned());
+                    PlayerInfoBox.setPlayerName(playersInfo.get(i), a.get(i).getPlayerName());
+                    PlayerInfoBox.setPlayerShots(playersInfo.get(i), a.get(i).getArrowsShoot());
+                    PlayerInfoBox.setPlayerPoints(playersInfo.get(i), a.get(i).getPointsEarned());
                 }
             }
         });

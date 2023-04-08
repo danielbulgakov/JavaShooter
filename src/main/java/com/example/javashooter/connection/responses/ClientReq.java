@@ -1,7 +1,7 @@
 package com.example.javashooter.connection.responses;
 
 public class ClientReq {
-    ClientActions clientActions;
+    final ClientActions clientActions;
     public ClientReq(ClientActions clientActions) {
         this.clientActions = clientActions;
     }
