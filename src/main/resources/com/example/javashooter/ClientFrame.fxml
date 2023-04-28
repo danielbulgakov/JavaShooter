@@ -90,7 +90,11 @@
                     styleClass="btn"
                     text="Выстрел"
                     onMouseClicked="#onShoot"
-
+            />
+            <Button
+                    styleClass="btn"
+                    text="Таблица лидеров"
+                    onMouseClicked="#onScoreTable"
             />
         </HBox>
     </bottom>

@@ -3,5 +3,6 @@ package com.example.javashooter.connection.responses;
 public enum ClientActions {
     READY,
     SHOOT,
-    STOP
+    STOP,
+    SCORE_TABLE
 }

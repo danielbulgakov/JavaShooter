@@ -67,6 +67,7 @@ public class ClientFrame implements IObserver {
     public void onShoot(MouseEvent mouseEvent) {
         sendRequest(new ClientReq(ClientActions.SHOOT));
     }
+    public void onScoreTable(MouseEvent mouseEvent) {sendRequest(new ClientReq(ClientActions.SCORE_TABLE));}
 
     @Override
     public void update() {
@@ -177,4 +178,6 @@ public class ClientFrame implements IObserver {
 
 
     }
+
+
 }

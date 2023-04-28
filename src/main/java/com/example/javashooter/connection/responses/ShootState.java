@@ -1,4 +1,4 @@
-package com.example.javashooter.connection;
+package com.example.javashooter.connection.responses;
 
 public enum ShootState {
     BIG_SHOT,

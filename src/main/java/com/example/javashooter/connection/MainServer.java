@@ -1,5 +1,6 @@
 package com.example.javashooter.connection;
 
+import com.example.javashooter.connection.database.DataBaseHibernate;
 import com.example.javashooter.connection.responses.SocketMesWrapper;
 
 import java.io.*;
@@ -27,7 +28,8 @@ public class MainServer {
             ip = InetAddress.getLocalHost();
             ss = new ServerSocket(port, 2, ip);
             System.out.append("Server start\n");
-            model.init();
+            DataBaseHibernate db = new DataBaseHibernate();
+            model.init(db);
 
             while(true)
             {

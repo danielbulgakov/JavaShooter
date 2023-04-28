@@ -1,11 +1,14 @@
 package com.example.javashooter.connection;
 
+import com.example.javashooter.connection.database.DataBaseHibernate;
+import com.example.javashooter.connection.database.PlayersEntity;
+import com.example.javashooter.connection.responses.ShootState;
 import com.example.javashooter.myobjects.MyPoint;
+
 
 import java.util.ArrayList;
 
 public class Model {
-
     private final ArrayList<IObserver> observerArrayList = new ArrayList<>();
     private ArrayList<ClientInfo> clientArrayList = new ArrayList<>();
     private ArrayList<MyPoint> targetArrayList = new ArrayList<>();
@@ -17,7 +20,8 @@ public class Model {
     private String winner = null;
     private static final int WINNER_POINTS = 2;
     private volatile boolean isGameReset = true;
-
+    private DataBaseHibernate dataBase;
+    private final ArrayList<PlayersEntity> entitiesList = new ArrayList<>();
     public void update()
     {
         for (IObserver o : observerArrayList) {
@@ -26,10 +30,13 @@ public class Model {
     }
 
     // Usual model data
-    public void init() {
+    public void init(DataBaseHibernate dataBase) {
+        this.dataBase = dataBase;
         targetArrayList.add(new MyPoint(500,280, 60));
         targetArrayList.add(new MyPoint(650,280, 30));
         arrowsCountUpdate();
+
+        dataBase.getAllPlayers().forEach(System.out::println);
     }
 
     // Add arrows for each player
@@ -62,7 +69,6 @@ public class Model {
         if (waitingList.contains(name)) {
             waitingList.remove(name);
             if (waitingList.size() == 0){
-                int a = 0;
                 synchronized(this) {
                     notifyAll();
                 }
@@ -156,7 +162,7 @@ public class Model {
         waitingList.clear();
         shootingList.clear();
         clientArrayList.forEach(ClientInfo::reset);
-        this.init();
+        this.init(dataBase);
     }
 
 
