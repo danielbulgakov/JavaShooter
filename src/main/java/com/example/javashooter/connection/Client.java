@@ -31,6 +31,7 @@ public class Client implements Runnable{
             serverResp.clientArrayList = model.getClientArrayList();
             serverResp.targetArrayList = model.getArrowsArrayList();
             serverResp.circleArrayList = model.getTargetArrayList();
+            serverResp.playersEntities = model.getEntitiesList();
             serverResp.theWinnerIs = model.getWinner();
 
             socketMesWrapper.writeData(gson.toJson(serverResp));
@@ -68,8 +69,13 @@ public class Client implements Runnable{
                 {
                     model.requestPause(getPlayerName());
                 }
-                if (msg.getClientActions() == ClientActions.SHOOT) {
+                if (msg.getClientActions() == ClientActions.SHOOT)
+                {
                     model.requestShoot(getPlayerName());
+                }
+                if (msg.getClientActions() == ClientActions.SCORE_TABLE)
+                {
+                    model.updateScoreTable();
                 }
 
 

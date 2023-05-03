@@ -3,7 +3,6 @@ package com.example.javashooter.connection.database;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.service.ServiceRegistry;
 
 public class HibernateSessionFactory {
     private static SessionFactory sessionFactory;
@@ -13,7 +12,7 @@ public class HibernateSessionFactory {
             try {
                 Configuration configuration = new Configuration().
                         configure();
-                configuration.addAnnotatedClass(PlayersEntity.class);
+                configuration.addAnnotatedClass(PlayerEntity.class);
                 StandardServiceRegistryBuilder builder =
                         new StandardServiceRegistryBuilder().
                                 applySettings(configuration.getProperties());

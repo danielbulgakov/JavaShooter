@@ -1,18 +1,15 @@
-<?xml version='1.0' encoding='utf-8'?>
-<!DOCTYPE hibernate-configuration PUBLIC
-        "-//Hibernate/Hibernate Configuration DTD//EN"
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE hibernate-configuration SYSTEM
         "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
-    <session-factory>
-        <property name="show_sql">true</property>
-        <property name="format_sql">true</property>
-        <property name="connection.driver_class">org.sqlite.JDBC</property>
-        <property name="hibernate.connection.url">
-            jdbc:sqlite:D:/Study/java/JavaShooter/player_stats
-        </property>
-        <property name="hibernate.connection.autocommit">true</property>
-        <property name="hibernate.hbm2ddl.auto">create</property>
-        <property name="dialect">org.sqlite.hibernate.dialect.SQLiteDialect</property>
-        <mapping resource="PlayersEntity.hbm.xml"/>
-    </session-factory>
+<session-factory>
+    <property name="show_sql">true</property>
+    <property name="format_sql">true</property>
+    <property name="dialect">org.hibernate.community.dialect.SQLiteDialect</property>
+    <property name="connection.driver_class">org.sqlite.JDBC</property>
+    <property name="connection.url">jdbc:sqlite:D:/Study/java/JavaShooter/player_stats.db</property>
+    <property name="hibernate.hbm2ddl.auto">update</property>
+    <property name="hibernate.connection.autocommit">true</property>
+    <mapping class="com.example.javashooter.connection.database.PlayerEntity"/>
+</session-factory>
 </hibernate-configuration>

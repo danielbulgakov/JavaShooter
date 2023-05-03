@@ -3,9 +3,9 @@ package com.example.javashooter.connection.database;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "players", schema = "main")
-public class PlayersEntity {
-
+@Table(name = "players", schema = "main", catalog = "")
+public class PlayerEntity {
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Id
     @Column(name = "name", nullable = true, length = 255)
     private String name;
@@ -28,4 +28,5 @@ public class PlayersEntity {
     public void setWins(int wins) {
         this.wins = wins;
     }
+
 }

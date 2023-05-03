@@ -2,6 +2,7 @@ package com.example.javashooter.connection.responses;
 
 
 import com.example.javashooter.connection.ClientInfo;
+import com.example.javashooter.connection.database.PlayerEntity;
 import com.example.javashooter.myobjects.MyPoint;
 
 
@@ -13,4 +14,5 @@ public class ServerResp {
     public ArrayList<MyPoint> targetArrayList;
 
     public String theWinnerIs;
+    public ArrayList<PlayerEntity> playersEntities;
 }

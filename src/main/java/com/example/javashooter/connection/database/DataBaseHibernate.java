@@ -1,13 +1,12 @@
 package com.example.javashooter.connection.database;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
-import java.util.ArrayList;
 
 public class DataBaseHibernate implements IDataBase {
 
@@ -16,7 +15,7 @@ public class DataBaseHibernate implements IDataBase {
     public DataBaseHibernate() {}
 
     @Override
-    public void addPlayer(PlayersEntity entity) {
+    public void addPlayer(PlayerEntity entity) {
         Session session = sessionFactory.openSession();
         Transaction txAdd = session.beginTransaction();
         session.persist(entity);
@@ -25,17 +24,17 @@ public class DataBaseHibernate implements IDataBase {
     }
 
     @Override
-    public PlayersEntity getPlayerWins(String name) {
+    public PlayerEntity getPlayerWins(String name) {
         Session session = sessionFactory.openSession();
         Transaction txAdd = session.beginTransaction();
-        PlayersEntity foundEntity = session.get(PlayersEntity.class, name);
+        PlayerEntity foundEntity = session.get(PlayerEntity.class, name);
         txAdd.commit();
         session.close();
         return foundEntity;
     }
 
     @Override
-    public void setPlayerWins(PlayersEntity entity) {
+    public void setPlayerWins(PlayerEntity entity) {
         Session session = sessionFactory.openSession();
         Transaction txAdd = session.beginTransaction();
         session.merge(entity);
@@ -44,15 +43,16 @@ public class DataBaseHibernate implements IDataBase {
     }
 
     @Override
-    public ArrayList<PlayersEntity> getAllPlayers() {
-//        Session session = sessionFactory.openSession();
-//        CriteriaBuilder cb = session.getCriteriaBuilder();
-//        CriteriaQuery<PlayersEntity> cq = cb.createQuery(PlayersEntity.class);
-//        Root<PlayersEntity> rootEntry = cq.from(PlayersEntity.class);
-//        CriteriaQuery<PlayersEntity> all = cq.select(rootEntry);
-//
-//        TypedQuery<PlayersEntity> allQuery = session.createQuery(all);
-//        return (ArrayList<PlayersEntity>) allQuery.getResultList();
-        return null;
+    public void incrementPlayerWins(PlayerEntity entity) {
+
+    }
+
+    @Override
+    public ArrayList<PlayerEntity> getAllPlayers() {
+
+        List<PlayerEntity> list = sessionFactory.openSession().
+                createQuery("From com.example.javashooter.connection.database.PlayerEntity", PlayerEntity.class).list();
+
+        return new ArrayList<>(list);
     }
 }

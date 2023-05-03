@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DdlMappings">
+    <mapping uuid="5e287aa6-6b2d-4bf7-a88a-c072b5239348" name="player_stats Mapping">
+      <data-sources db="4fe3a29e-3318-4ac4-9511-a1e09549b831" ddl="f1265c17-2997-489d-b1fe-8841acad1e4f" />
+      <scope>
+        <node kind="schema" qname="main" />
+      </scope>
+    </mapping>
+  </component>
+</project>

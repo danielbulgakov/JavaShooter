@@ -3,6 +3,7 @@ package com.example.javashooter;
 import com.example.javashooter.connection.ClientInfo;
 import com.example.javashooter.connection.Model;
 import com.example.javashooter.connection.ModelBuilder;
+import com.example.javashooter.connection.database.PlayerEntity;
 import com.example.javashooter.connection.responses.ClientActions;
 import com.example.javashooter.connection.responses.ClientReq;
 import com.example.javashooter.connection.IObserver;
@@ -13,12 +14,17 @@ import com.example.javashooter.myobjects.PlayerInfoBox;
 import com.google.gson.Gson;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.shape.Circle;
+import javafx.stage.Stage;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -45,6 +51,8 @@ public class ClientFrame implements IObserver {
         m.addObserver(this);
     }
 
+    private boolean isShowTable = false;
+
     private void sendRequest(ClientReq msg)
     {
         try {
@@ -67,7 +75,10 @@ public class ClientFrame implements IObserver {
     public void onShoot(MouseEvent mouseEvent) {
         sendRequest(new ClientReq(ClientActions.SHOOT));
     }
-    public void onScoreTable(MouseEvent mouseEvent) {sendRequest(new ClientReq(ClientActions.SCORE_TABLE));}
+    public void onScoreTable(MouseEvent mouseEvent) {
+        sendRequest(new ClientReq(ClientActions.SCORE_TABLE));
+        isShowTable = true;
+    }
 
     @Override
     public void update() {
@@ -76,6 +87,38 @@ public class ClientFrame implements IObserver {
         updatePlayersInfo(m.getClientArrayList());
         updatePlayers(m.getClientArrayList());
         updateArrows(m.getArrowsArrayList());
+        if (isShowTable && m.getEntitiesList() != null && m.getEntitiesList().size() != 0) {
+            alertPlayersTable();
+            isShowTable = false;
+        }
+    }
+
+    private void alertPlayersTable() {
+        TableView tableView = new TableView();
+
+        TableColumn<PlayerEntity, String> column1 =
+                new TableColumn<>("Имя");
+
+        column1.setCellValueFactory(
+                new PropertyValueFactory<>("name"));
+
+
+        TableColumn<PlayerEntity, String> column2 =
+                new TableColumn<>("Победы");
+
+        column2.setCellValueFactory(
+                new PropertyValueFactory<>("wins"));
+
+        tableView.getColumns().add(column1);
+        tableView.getColumns().add(column2);
+
+        m.getEntitiesList().forEach(tableView.getItems()::add);
+
+        VBox vbox = new VBox(tableView);
+        Scene scene = new Scene(vbox);
+        Stage stage = new Stage();
+        stage.setScene(scene);
+        stage.show();
     }
 
     private void checkWinner() {

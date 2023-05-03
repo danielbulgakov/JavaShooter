@@ -1,7 +1,7 @@
 package com.example.javashooter.connection;
 
 import com.example.javashooter.connection.database.DataBaseHibernate;
-import com.example.javashooter.connection.database.PlayersEntity;
+import com.example.javashooter.connection.database.PlayerEntity;
 import com.example.javashooter.connection.responses.ShootState;
 import com.example.javashooter.myobjects.MyPoint;
 
@@ -21,12 +21,16 @@ public class Model {
     private static final int WINNER_POINTS = 2;
     private volatile boolean isGameReset = true;
     private DataBaseHibernate dataBase;
-    private final ArrayList<PlayersEntity> entitiesList = new ArrayList<>();
+    private ArrayList<PlayerEntity> entitiesList = new ArrayList<>();
     public void update()
     {
         for (IObserver o : observerArrayList) {
             o.update();
         }
+    }
+
+    public void updateScoreTable() {
+        entitiesList = dataBase.getAllPlayers();
     }
 
     // Usual model data
@@ -162,6 +166,7 @@ public class Model {
         waitingList.clear();
         shootingList.clear();
         clientArrayList.forEach(ClientInfo::reset);
+        updateScoreTable();
         this.init(dataBase);
     }
 
@@ -186,6 +191,11 @@ public class Model {
         clientArrayList.forEach(clientDataManager -> {
             if (clientDataManager.getPointsEarned() >= WINNER_POINTS) {
                 this.winner = clientDataManager.getPlayerName();
+                PlayerEntity p = entitiesList.stream()
+                        .filter(entity -> entity.getName().equals(winner))
+                        .findFirst()
+                        .orElse(null);
+                dataBase.incrementPlayerWins(p);
                 gameReset();
                 return;
             }
@@ -225,6 +235,11 @@ public class Model {
 
     public void addClient(ClientInfo clientData) {
         clientArrayList.add(clientData);
+        PlayerEntity p = new PlayerEntity();
+        p.setName(clientData.getPlayerName());
+        p.setWins(0);
+        entitiesList.add(p);
+        dataBase.addPlayer(p);
         this.arrowsCountUpdate();
     }
     public String getWinner() {
@@ -264,5 +279,11 @@ public class Model {
         this.arrowArrayList = arrowArrayList;
     }
 
+    public ArrayList<PlayerEntity> getEntitiesList() {
+        return entitiesList;
+    }
 
+    public void setEntitiesList(ArrayList<PlayerEntity> entitiesList) {
+        this.entitiesList = entitiesList;
+    }
 }

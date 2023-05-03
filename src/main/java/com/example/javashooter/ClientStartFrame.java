@@ -51,6 +51,7 @@ public class ClientStartFrame {
                                     m.setClientArrayList(ra.clientArrayList);
                                     m.setArrowArrayList(ra.targetArrayList);
                                     m.setWinner(ra.theWinnerIs);
+                                    m.setEntitiesList(ra.playersEntities);
                                     m.update();
                                 }
 
