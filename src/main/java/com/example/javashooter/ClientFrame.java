@@ -3,7 +3,7 @@ package com.example.javashooter;
 import com.example.javashooter.connection.ClientInfo;
 import com.example.javashooter.connection.Model;
 import com.example.javashooter.connection.ModelBuilder;
-import com.example.javashooter.connection.database.PlayerEntity;
+import com.example.javashooter.connection.database_hibernate.PlayerEntity;
 import com.example.javashooter.connection.responses.ClientActions;
 import com.example.javashooter.connection.responses.ClientReq;
 import com.example.javashooter.connection.IObserver;
@@ -94,31 +94,38 @@ public class ClientFrame implements IObserver {
     }
 
     private void alertPlayersTable() {
-        TableView tableView = new TableView();
+        m.getEntitiesList().forEach(System.out::println);
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                TableView tableView = new TableView();
 
-        TableColumn<PlayerEntity, String> column1 =
-                new TableColumn<>("Имя");
+                TableColumn<ClientInfo, String> column1 =
+                        new TableColumn<>("Имя");
 
-        column1.setCellValueFactory(
-                new PropertyValueFactory<>("name"));
+                column1.setCellValueFactory(
+                        new PropertyValueFactory<>("playerName"));
 
 
-        TableColumn<PlayerEntity, String> column2 =
-                new TableColumn<>("Победы");
+                TableColumn<ClientInfo, String> column2 =
+                        new TableColumn<>("Победы");
 
-        column2.setCellValueFactory(
-                new PropertyValueFactory<>("wins"));
+                column2.setCellValueFactory(
+                        new PropertyValueFactory<>("wins"));
 
-        tableView.getColumns().add(column1);
-        tableView.getColumns().add(column2);
+                tableView.getColumns().add(column1);
+                tableView.getColumns().add(column2);
 
-        m.getEntitiesList().forEach(tableView.getItems()::add);
+                m.getEntitiesList().forEach(tableView.getItems()::add);
 
-        VBox vbox = new VBox(tableView);
-        Scene scene = new Scene(vbox);
-        Stage stage = new Stage();
-        stage.setScene(scene);
-        stage.show();
+                VBox vbox = new VBox(tableView);
+                Scene scene = new Scene(vbox);
+                Stage stage = new Stage();
+                stage.setScene(scene);
+                stage.setTitle("Таблица лидеров");
+                stage.show();
+            }
+        });
     }
 
     private void checkWinner() {

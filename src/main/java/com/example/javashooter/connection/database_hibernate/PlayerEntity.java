@@ -1,4 +1,4 @@
-package com.example.javashooter.connection.database;
+package com.example.javashooter.connection.database_hibernate;
 
 import javax.persistence.*;
 

@@ -1,7 +1,8 @@
 package com.example.javashooter.connection;
 
-import com.example.javashooter.connection.database.DataBaseHibernate;
-import com.example.javashooter.connection.database.PlayerEntity;
+import com.example.javashooter.connection.database_hibernate.DataBaseHibernate;
+import com.example.javashooter.connection.database_hibernate.PlayerEntity;
+import com.example.javashooter.connection.database_jdbc.DataBase;
 import com.example.javashooter.connection.responses.ShootState;
 import com.example.javashooter.myobjects.MyPoint;
 
@@ -17,11 +18,12 @@ public class Model {
     private static final int Y_BOUND = 560;
     private final ArrayList<String> waitingList = new ArrayList<>();
     private final ArrayList<String> shootingList = new ArrayList<>();
+    private ArrayList<ClientInfo> entitiesList = new ArrayList<>();
     private String winner = null;
     private static final int WINNER_POINTS = 2;
     private volatile boolean isGameReset = true;
-    private DataBaseHibernate dataBase;
-    private ArrayList<PlayerEntity> entitiesList = new ArrayList<>();
+    private DataBase dataBase;
+    private MainServer mc;
     public void update()
     {
         for (IObserver o : observerArrayList) {
@@ -29,18 +31,21 @@ public class Model {
         }
     }
 
+    public void setMc(MainServer mc) {
+        this.mc = mc;
+    }
+
     public void updateScoreTable() {
         entitiesList = dataBase.getAllPlayers();
+        mc.bcast();
     }
 
     // Usual model data
-    public void init(DataBaseHibernate dataBase) {
+    public void init(DataBase dataBase) {
         this.dataBase = dataBase;
         targetArrayList.add(new MyPoint(500,280, 60));
         targetArrayList.add(new MyPoint(650,280, 30));
         arrowsCountUpdate();
-
-        dataBase.getAllPlayers().forEach(System.out::println);
     }
 
     // Add arrows for each player
@@ -106,6 +111,7 @@ public class Model {
                     while (true) {
                         if (isGameReset) {
                             winner = null;
+                            mc.bcast();
                             break;
                         }
                         if (waitingList.size() != 0) {
@@ -166,7 +172,6 @@ public class Model {
         waitingList.clear();
         shootingList.clear();
         clientArrayList.forEach(ClientInfo::reset);
-        updateScoreTable();
         this.init(dataBase);
     }
 
@@ -191,15 +196,20 @@ public class Model {
         clientArrayList.forEach(clientDataManager -> {
             if (clientDataManager.getPointsEarned() >= WINNER_POINTS) {
                 this.winner = clientDataManager.getPlayerName();
-                PlayerEntity p = entitiesList.stream()
-                        .filter(entity -> entity.getName().equals(winner))
+                var name = this.winner;
+                gameReset();
+                ClientInfo p = entitiesList.stream()
+                        .filter(entity -> entity.getPlayerName().equals(name))
                         .findFirst()
                         .orElse(null);
-                dataBase.incrementPlayerWins(p);
-                gameReset();
+                assert p != null;
+                p.setWins(p.getWins() + 1);
+                dataBase.setPlayerWins(p);
+
                 return;
             }
         });
+
     }
 
     private synchronized ShootState targetHitCheck(MyPoint p) {
@@ -235,11 +245,9 @@ public class Model {
 
     public void addClient(ClientInfo clientData) {
         clientArrayList.add(clientData);
-        PlayerEntity p = new PlayerEntity();
-        p.setName(clientData.getPlayerName());
-        p.setWins(0);
-        entitiesList.add(p);
-        dataBase.addPlayer(p);
+        clientData.setWins(0);
+        entitiesList.add(clientData);
+        dataBase.addPlayer(clientData);
         this.arrowsCountUpdate();
     }
     public String getWinner() {
@@ -279,11 +287,11 @@ public class Model {
         this.arrowArrayList = arrowArrayList;
     }
 
-    public ArrayList<PlayerEntity> getEntitiesList() {
+    public ArrayList<ClientInfo> getEntitiesList() {
         return entitiesList;
     }
 
-    public void setEntitiesList(ArrayList<PlayerEntity> entitiesList) {
+    public void setEntitiesList(ArrayList<ClientInfo> entitiesList) {
         this.entitiesList = entitiesList;
     }
 }

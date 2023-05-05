@@ -10,6 +10,6 @@
     <property name="connection.url">jdbc:sqlite:D:/Study/java/JavaShooter/player_stats.db</property>
     <property name="hibernate.hbm2ddl.auto">update</property>
     <property name="hibernate.connection.autocommit">true</property>
-    <mapping class="com.example.javashooter.connection.database.PlayerEntity"/>
+    <mapping class="com.example.javashooter.connection.database_hibernate.PlayerEntity"/>
 </session-factory>
 </hibernate-configuration>

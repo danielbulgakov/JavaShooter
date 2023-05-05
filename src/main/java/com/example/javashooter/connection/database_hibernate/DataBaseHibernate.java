@@ -1,4 +1,4 @@
-package com.example.javashooter.connection.database;
+package com.example.javashooter.connection.database_hibernate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,7 +51,7 @@ public class DataBaseHibernate implements IDataBase {
     public ArrayList<PlayerEntity> getAllPlayers() {
 
         List<PlayerEntity> list = sessionFactory.openSession().
-                createQuery("From com.example.javashooter.connection.database.PlayerEntity", PlayerEntity.class).list();
+                createQuery("From com.example.javashooter.connection.database_hibernate.PlayerEntity", PlayerEntity.class).list();
 
         return new ArrayList<>(list);
     }
